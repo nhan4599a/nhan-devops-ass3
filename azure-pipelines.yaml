@@ -4,7 +4,7 @@ name: Azure Pipelines
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 trigger:
-- main
+- master
 - staging
 
 # ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
