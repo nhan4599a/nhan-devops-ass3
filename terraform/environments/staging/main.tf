@@ -1,3 +1,13 @@
+terraform {
+  required_providers {
+    azurerm = {
+        source = "hashicorp/azurerm",
+        version = "~> 3.0.2"
+    }
+  }
+
+  required_version = ">= 1.1.0"
+}
 provider "azurerm" {
   tenant_id       = "${var.tenant_id}"
   subscription_id = "${var.subscription_id}"
@@ -5,13 +15,7 @@ provider "azurerm" {
   client_secret   = "${var.client_secret}"
   features {}
 }
-terraform {
-  backend "azurerm" {
-    storage_account_name = "nhan4599terraform"
-    container_name       = "terraform-state"
-    key                  = "staging.terraform.tfstate"
-  }
-}
+
 module "resource_group" {
   source               = "../../modules/resource_group"
   resource_group       = "${var.resource_group_name}"
