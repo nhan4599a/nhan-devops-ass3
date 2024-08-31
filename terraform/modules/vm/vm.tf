@@ -1,7 +1,4 @@
-resource "azurerm_network_interface" "" {
-  #count               = var.number_of_vms
-  #name                = "nic-${count.index}"
-  
+resource "azurerm_network_interface" "staging" {
   name                = "nic0"
   location            = var.location
   resource_group_name = var.resource_group
@@ -14,7 +11,7 @@ resource "azurerm_network_interface" "" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "" {
+resource "azurerm_linux_virtual_machine" "staging" {
   name                            = "vm0"
   location                        = var.location
   resource_group_name             = var.resource_group
@@ -25,7 +22,6 @@ resource "azurerm_linux_virtual_machine" "" {
   disable_password_authentication = true
   
   network_interface_ids = [
-    #element(azurerm_network_interface.test.*.id, count.index)
     azurerm_network_interface.test.id
   ]
 
