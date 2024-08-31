@@ -16,11 +16,11 @@ provider "azurerm" {
   features {}
 }
 
-module "resource_group" {
-  source               = "../../modules/resource_group"
-  resource_group       = "${var.resource_group_name}"
-  location             = "${var.location}"
-}
+# module "resource_group" {
+#   source               = "../../modules/resource_group"
+#   resource_group       = "${var.resource_group_name}"
+#   location             = "${var.location}"
+# }
 module "network" {
   source               = "../../modules/network"
   address_space        = "${var.address_space}"
