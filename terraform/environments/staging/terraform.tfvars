@@ -13,3 +13,5 @@ application_type = "api-app"
 virtual_network_name = "vm_net"
 address_space = ["10.5.0.0/16"]
 address_prefix = "10.5.1.0/24"
+packer_image_id = ""
+admin_password = ""

@@ -13,4 +13,6 @@ variable "application_type" {}
 variable virtual_network_name {}
 variable address_prefix {}
 variable address_space {}
-
+variable packer_image_id {}
+variable public_key_path {}
+variable admin_password {}

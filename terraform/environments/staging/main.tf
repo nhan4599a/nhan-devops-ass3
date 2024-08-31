@@ -28,7 +28,7 @@ module "network" {
   virtual_network_name = "${var.virtual_network_name}"
   application_type     = "${var.application_type}"
   resource_type        = "NET"
-  resource_group       = "${module.resource_group.resource_group_name}"
+  resource_group       = "${var.resource_group_name}"
   address_prefix  = "${var.address_prefix}"
 }
 
@@ -37,7 +37,7 @@ module "nsg" {
   location         = "${var.location}"
   application_type = "${var.application_type}"
   resource_type    = "NSG"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = "${var.resource_group_name}"
   subnet_id        = "${module.network.subnet_id}"
   address_prefix = "${var.address_prefix}"
 }
@@ -46,12 +46,25 @@ module "appservice" {
   location         = "${var.location}"
   application_type = "${var.application_type}"
   resource_type    = "AppService"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = "${var.resource_group_name}"
 }
 module "publicip" {
   source           = "../../modules/publicip"
   location         = "${var.location}"
   application_type = "${var.application_type}"
   resource_type    = "publicip"
-  resource_group   = "${module.resource_group.resource_group_name}"
+  resource_group   = "${var.resource_group_name}"
+}
+
+module "vm" {
+  source               = "../../modules/vm"
+  location             = "${var.location}"
+  resource_group       = "${var.resource_group_name}"
+  resource_type        = "vm"
+
+  admin_username       = "azureuser"
+  subnet_id_test       = module.network.subnet_id_test
+  instance_ids         = module.publicip.public_ip_address_id
+  packer_image         = var.packer_image_id
+  admin_password      = var.admin_password
 }

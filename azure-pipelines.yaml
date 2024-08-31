@@ -31,13 +31,13 @@ stages:
     # Use Terraform to create the Infrastructure      
     # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@0
-      displayName: 'Terrafom installation'
+      displayName: 'Terraform installation'
       inputs:
         terraformVersion: '1.9.4'
     
     # Run Terraform Init on the pipeline agent 
     - task: TerraformTaskV3@3
-      displayName: 'Terrafom init'
+      displayName: 'Terraform init'
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -64,7 +64,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)"'
+        commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)" -var "admin_password=$(admin_password)"'
 
     
     #--------------------------------------------#
@@ -141,7 +141,7 @@ stages:
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
   # ToDo: 
-  - deployment: VMDeploy
+  - deployment: SeleniumUITests
     displayName: Selenium Tests
     environment:
       name: $(environmentName)
@@ -169,7 +169,7 @@ stages:
 #--------------------------------------------#
 - stage: Test
   jobs:
-  - job: ExecuteTtests
+  - job: ExecuteTests
     steps:
     # Postman Data Validation Test Suite    
     - task: Bash@3
