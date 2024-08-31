@@ -66,48 +66,14 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
         commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)"'
 
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-#--------------------------------------------#
-    # Postman Data Validation Test Suite    
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run TestSuite.Data-Validation.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman Regression Test Suite    
-    - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run TestSuite.Regression.json -e Test.environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman - Publish Results 
-    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
-        searchFolder:       # ToDo
-        mergeTestResults: true
-        testRunTitle:       # ToDo
-
+    
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
     # "ArchiveFiles@2" picks up the web package and archives it.
     - task: ArchiveFiles@2
       displayName: 'Archive UI Tests'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-ui_tests.zip'
@@ -121,31 +87,31 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: /fake-rest-api
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-restapi.zip'
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-restapi.zip
-      displayName: 'Upload Package'
+      displayName: 'Upload FakeRestAPI Package'
       artifact: rest-api-artifact
 
     #--------------------------------------------#  
     # JMeter (Performance) Test Suite - Archive
     - task: ArchiveFiles@2
-      displayName: 'Archive PerformanceTestSuite'
+      displayName: 'Archive Performance testsuite'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: /automated-testing/jmeter
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perf_tests.zip'
     # JMeter Test Suite - Publish    
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perf_tests.zip
-      displayName: 'Upload Package'
+      displayName: 'Upload Performance testsuite Package'
       artifact: performance-tests-artifact
 
-#--------------------------------------------#  
+#--------------------------------------------#
 # DEPLOYMENT STAGE
-#--------------------------------------------#    
+#--------------------------------------------#
 - stage: Deploy
   jobs:
   #--------------------------------------------#  
@@ -168,7 +134,7 @@ stages:
           - task: CmdLine@2
             inputs:
               script: |
-                jmeter -n -t PerformanceTestSuite.jmx -j jmeter.log -f
+                jmeter -n -t stress_test_suite.jmx -j jmeter.log -f
                 cat jmeter.log
               workingDirectory: $(Pipeline.Workspace)/performance-tests-artifact
               
@@ -196,3 +162,38 @@ stages:
                 python3 ../ui-tests/functional_ui_test.py
                 cat functional_ui_test_selenium.log
                 "
+
+
+#--------------------------------------------#
+# TEST STAGE
+#--------------------------------------------#
+- stage: Test
+  jobs:
+  - job: ExecuteTtests
+    steps:
+    # Postman Data Validation Test Suite    
+    - task: Bash@3
+      displayName: Run Data Validation Tests
+      continueOnError: true
+      inputs:
+        targetType: 'inline'
+        script: 'newman run validation_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export validation_test_result.xml'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+    # Postman Regression Test Suite    
+    - task: Bash@3
+      displayName: Run Regression Tests
+      continueOnError: true
+      inputs:
+        targetType: 'inline'
+        script: 'newman run regression_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export regression_test_result.xml'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+    # Postman - Publish Results 
+    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
+    - task: PublishTestResults@2
+      displayName: Publish Tests Result
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/*_result.xml'
+        searchFolder:       # ToDo
+        mergeTestResults: true
+        testRunTitle:       # ToDo
