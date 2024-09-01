@@ -117,6 +117,7 @@ stages:
   #--------------------------------------------#  
   # Deploy FakeRestAPI Web App
   - deployment: RestAPI
+    displayName: Rest APIs
     environment: $(environmentName)
     strategy:
       runOnce:
@@ -129,14 +130,6 @@ stages:
               appName: 'api-app-AppService'
               appType: webApp
               package: $(Pipeline.Workspace)/rest-api-artifact/$(Build.BuildId)-restapi.zip 
-          #--------------------------------------------#    
-          # Run JMeter test suite against the App Service
-          - task: CmdLine@2
-            inputs:
-              script: |
-                jmeter -n -t stress_test_suite.jmx -j jmeter.log -f
-                cat jmeter.log
-              workingDirectory: $(Pipeline.Workspace)/performance-tests-artifact
               
   #--------------------------------------------#  
   # Selenium | Functional UI Tests
@@ -170,6 +163,7 @@ stages:
 - stage: Test
   jobs:
   - job: ExecuteTests
+    displayName: Execute Tests
     steps:
     # Postman Data Validation Test Suite    
     - task: Bash@3
@@ -187,13 +181,47 @@ stages:
         targetType: 'inline'
         script: 'newman run regression_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export regression_test_result.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
-    # Postman - Publish Results 
+
+    - task: Bash@3
+      displayName: 'Endurance Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automated-testing/jmeter/endurance_test_suite.jmx \
+            -l endurance-test-report/endurance-results.jtl \
+            -e \
+            -o endurance-test-report
+    
+    - task: publishhtmlreport@1
+      displayName: 'Publish Endurance Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/endurance-test-report'    
+
+    - task: Bash@3
+      displayName: 'Stress Test Suite'
+      inputs:
+        targetType: 'inline'
+        script: |
+          jmeter -n \
+            -t automated-testing/jmeter/stress_test_suite.jmx \
+            -l stress-test-report/stress-results.jtl \
+            -e \
+            -o stress-test-report
+
+    - task: publishhtmlreport@1
+      displayName: 'Publish Stress Test Results'
+      inputs:
+        htmlType: 'Jmeter'
+        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/stress-test-report'
+
     # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
     - task: PublishTestResults@2
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/*_result.xml'
-        searchFolder:       # ToDo
+        searchFolder: '$(Build.DefaultWorkingDirectory)'
         mergeTestResults: true
-        testRunTitle:       # ToDo
+        testRunTitle: 'system_test'
