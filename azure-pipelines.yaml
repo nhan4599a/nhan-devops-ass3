@@ -75,6 +75,7 @@ stages:
       displayName: Add VMs to environment
       inputs:
         targetType: 'inline'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         script: |
           VM_IP=$(terraform output -raw vm_ip)
           echo $VM_IP
