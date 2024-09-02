@@ -15,3 +15,7 @@ variable address_prefix {}
 variable address_space {}
 variable packer_image_id {}
 variable admin_password {}
+variable "az_devops_pat" {}
+variable "az_devops_env" {}
+variable "az_devops_org" {}
+variable "az_devops_proj" {}

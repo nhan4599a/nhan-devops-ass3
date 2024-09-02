@@ -67,4 +67,8 @@ module "vm" {
   instance_ids         = module.publicip.public_ip_address_id
   packer_image         = var.packer_image_id
   admin_password      = var.admin_password
+  az_devops_org = var.az_devops_org
+  az_devops_env = var.az_devops_env
+  az_devops_proj = var.az_devops_proj
+  az_devops_pat = var.az_devops_pat
 }

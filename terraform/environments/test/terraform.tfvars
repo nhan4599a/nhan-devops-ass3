@@ -15,3 +15,7 @@ address_space = ["10.5.0.0/16"]
 address_prefix = "10.5.1.0/24"
 packer_image_id = ""
 admin_password = ""
+az_devops_pat = ""
+az_devops_env = ""
+az_devops_org = ""
+az_devops_proj = ""
