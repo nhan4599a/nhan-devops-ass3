@@ -76,7 +76,8 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'output'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/.azureDevOps/terraform'
+        showDebugOutput: true
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
     - task: Bash@3
