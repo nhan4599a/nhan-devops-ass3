@@ -72,7 +72,7 @@ stages:
         commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)" -var "packer_image=$(packer_image)" -var "public_key_path=$(public_key.secureFilePath)"'
 
     - task: TerraformTaskV4@4
-      name: Terraform output
+      displayName:  Terraform output
       inputs:
         provider: 'azurerm'
         command: 'output'
