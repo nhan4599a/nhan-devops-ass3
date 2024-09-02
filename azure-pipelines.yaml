@@ -158,29 +158,6 @@ stages:
               appName: 'udacity-ass3-api-app-AppService'
               appType: webApp
               package: $(Pipeline.Workspace)/rest-api-artifact/$(Build.BuildId)-restapi.zip 
-              
-  #--------------------------------------------#  
-  # Selenium | Functional UI Tests
-  # ToDo: 
-  - deployment: SeleniumUITests
-    displayName: Execute Selenium Tests
-    environment:
-      name: $(environmentName)
-      resourceType: VirtualMachine
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: ui-tests
-            
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
-                python3 ../ui-tests/functional_ui_test.py
-                cat functional_ui_test_selenium.log
 
 #--------------------------------------------#
 # TEST STAGE
@@ -211,6 +188,7 @@ stages:
       displayName: 'Execute Endurance Test Suite'
       inputs:
         targetType: 'inline'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
         script: |
           jmeter -n \
             -t automated-testing/jmeter/endurance_test_suite.jmx \
@@ -228,6 +206,7 @@ stages:
       displayName: 'Stress Test Suite'
       inputs:
         targetType: 'inline'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
         script: |
           jmeter -n \
             -t automated-testing/jmeter/stress_test_suite.jmx \
@@ -240,6 +219,16 @@ stages:
       inputs:
         htmlType: 'Jmeter'
         JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/stress-test-report'
+
+    - task: Bash@3
+      displayName: 'Execute selenium UI Tests'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
+          python3 ./functional_ui_test.py
+          cat functional_ui_test_selenium.log
 
     - task: Bash@3
       displayName: 'Print Performance Test Logs'
