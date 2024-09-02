@@ -222,9 +222,9 @@ stages:
 
     - task: Bash@3
       displayName: 'Execute selenium UI Tests'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
       inputs:
         targetType: 'inline'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
         script: |
           echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
           python3 ./functional_ui_test.py
