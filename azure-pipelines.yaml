@@ -171,7 +171,14 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'ls -la $(System.DefaultWorkingDirectory)'
+        script: 'ls -la $(System.DefaultWorkingDirectory)/automated-testing'
+
+    - task: Bash@3
+      displayName: Root folder contents
+      continueOnError: true
+      inputs:
+        targetType: 'inline'
+        script: 'ls -la $(System.DefaultWorkingDirectory)/automated-testing/post'
 
     # Postman Data Validation Test Suite    
     - task: Bash@3
@@ -179,7 +186,7 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run validation_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export validation_test_result.xml'
+        script: 'newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export validation_test_result.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         
     # Postman Regression Test Suite    
@@ -188,7 +195,7 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run regression_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export regression_test_result.xml'
+        script: 'newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export regression_test_result.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
     - task: Bash@3
