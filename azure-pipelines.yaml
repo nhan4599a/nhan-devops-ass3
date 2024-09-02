@@ -81,6 +81,7 @@ stages:
         filename: 'terraform_out.json'
         outputDirectory: '$(System.DefaultWorkingDirectory)'
         outputFormat: 'json'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         showDebugOutput: true
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
