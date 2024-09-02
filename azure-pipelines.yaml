@@ -115,7 +115,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: /fake-rest-api
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fake-rest-api'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-restapi.zip'
@@ -128,7 +128,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive Performance testsuite'
       inputs:
-        rootFolderOrFile: /automated-testing/jmeter
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perf_tests.zip'
@@ -177,7 +177,7 @@ stages:
           - task: Bash@3
             inputs:
               targetType: 'inline'
-              script: |           
+              script: |
                 echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
                 python3 ../ui-tests/functional_ui_test.py
                 cat functional_ui_test_selenium.log
@@ -208,7 +208,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
     - task: Bash@3
-      displayName: 'Endurance Test Suite'
+      displayName: 'Execute Endurance Test Suite'
       inputs:
         targetType: 'inline'
         script: |
@@ -222,7 +222,7 @@ stages:
       displayName: 'Publish Endurance Test Results'
       inputs:
         htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/endurance-test-report'    
+        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/endurance-test-report'
 
     - task: Bash@3
       displayName: 'Stress Test Suite'
@@ -235,11 +235,20 @@ stages:
             -e \
             -o stress-test-report
 
-    - task: PublishTestResults@1
+    - task: publishhtmlreport@1
       displayName: 'Publish Stress Test Results'
       inputs:
         htmlType: 'Jmeter'
         JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/stress-test-report'
+
+    - task: Bash@3
+      displayName: 'Print Performance Test Logs'
+      inputs:
+        targetType: 'inline'
+        script: |
+          ls -lah endurance-test-report/
+          ls -lah stress-test-report/
+          cat jmeter.log   
 
     # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
     - task: PublishTestResults@2
