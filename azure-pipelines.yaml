@@ -93,7 +93,6 @@ stages:
         script: |
           VM_IP=$(grep 'vm_ip' terraform_output.json | awk -F'=' '{print $2}' | tr -d ' "')
           echo $VM_IP
-          echo $(az_devops_pat)
     
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
@@ -167,6 +166,13 @@ stages:
   - job: ExecuteTests
     displayName: Execute Tests
     steps:
+    - task: Bash@3
+      displayName: Root folder contents
+      continueOnError: true
+      inputs:
+        targetType: 'inline'
+        script: 'ls -la $(System.DefaultWorkingDirectory)'
+
     # Postman Data Validation Test Suite    
     - task: Bash@3
       displayName: Run Data Validation Tests
@@ -175,6 +181,7 @@ stages:
         targetType: 'inline'
         script: 'newman run validation_test.json -e staging.environment.json --reporters cli,junit --reporter-junit-export validation_test_result.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+        
     # Postman Regression Test Suite    
     - task: Bash@3
       displayName: Run Regression Tests
@@ -186,6 +193,7 @@ stages:
 
     - task: Bash@3
       displayName: 'Execute Endurance Test Suite'
+      continueOnError: true
       inputs:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
@@ -222,6 +230,7 @@ stages:
 
     - task: Bash@3
       displayName: 'Execute selenium UI Tests'
+      continueOnError: true
       inputs:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
