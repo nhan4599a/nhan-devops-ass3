@@ -19,7 +19,6 @@ resource "azurerm_linux_virtual_machine" "test" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   source_image_id                 = var.packer_image
-  disable_password_authentication = true
   
   network_interface_ids = [
     azurerm_network_interface.test.id

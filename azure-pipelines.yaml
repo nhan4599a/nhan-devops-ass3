@@ -122,7 +122,7 @@ stages:
             displayName: 'Deploy Azure Web App'
             inputs:
               azureSubscription: '$(azureServiceConnectionId)'
-              appName: 'api-app-AppService'
+              appName: 'udacity-ass3-api-app-AppService'
               appType: webApp
               package: $(Pipeline.Workspace)/rest-api-artifact/$(Build.BuildId)-restapi.zip 
               

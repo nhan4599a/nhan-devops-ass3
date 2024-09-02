@@ -19,7 +19,7 @@
       </ThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request">
-          <stringProp name="HTTPSampler.domain">api-app-appservice.azurewebsites.net</stringProp>
+          <stringProp name="HTTPSampler.domain">udacity-ass3-api-app-appservice.azurewebsites.net</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.path">/api/Activities/${id}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>

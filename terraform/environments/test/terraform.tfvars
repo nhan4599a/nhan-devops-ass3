@@ -7,7 +7,7 @@ tenant_id = ""
 # Resource Group/Location
 location = "eastasia"
 resource_group_name = "udacity-ass3"
-application_type = "api-app"
+application_type = "udacity-ass3-api-app"
 
 # Network
 virtual_network_name = "vm_net"
