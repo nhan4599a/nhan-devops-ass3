@@ -16,6 +16,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   location                        = var.location
   resource_group_name             = var.resource_group
   size                            = "Standard_B1s"
+  disable_password_authentication = false
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   source_image_id                 = var.packer_image
