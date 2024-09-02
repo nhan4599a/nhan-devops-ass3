@@ -1,4 +1,4 @@
-resource "azurerm_network_interface" "staging" {
+resource "azurerm_network_interface" "test" {
   name                = "nic0"
   location            = var.location
   resource_group_name = var.resource_group
