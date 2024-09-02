@@ -166,20 +166,6 @@ stages:
   - job: ExecuteTests
     displayName: Execute Tests
     steps:
-    - task: Bash@3
-      displayName: Root folder contents
-      continueOnError: true
-      inputs:
-        targetType: 'inline'
-        script: 'ls -la $(System.DefaultWorkingDirectory)/automated-testing'
-
-    - task: Bash@3
-      displayName: Root folder contents
-      continueOnError: true
-      inputs:
-        targetType: 'inline'
-        script: 'ls -la $(System.DefaultWorkingDirectory)/automated-testing/post'
-
     # Postman Data Validation Test Suite    
     - task: Bash@3
       displayName: Run Data Validation Tests
@@ -206,10 +192,10 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
         script: |
           jmeter -n \
-            -t automated-testing/jmeter/endurance_test_suite.jmx \
-            -l endurance-test-report/endurance-results.jtl \
+            -t ./endurance_test_suite.jmx \
+            -l ./endurance-test-report/endurance-results.jtl \
             -e \
-            -o endurance-test-report
+            -o ./endurance-test-report
     
     - task: publishhtmlreport@1
       displayName: 'Publish Endurance Test Results'
@@ -224,10 +210,10 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
         script: |
           jmeter -n \
-            -t automated-testing/jmeter/stress_test_suite.jmx \
-            -l stress-test-report/stress-results.jtl \
+            -t ./stress_test_suite.jmx \
+            -l ./stress-test-report/stress-results.jtl \
             -e \
-            -o stress-test-report
+            -o ./stress-test-report
 
     - task: publishhtmlreport@1
       displayName: 'Publish Stress Test Results'
@@ -250,10 +236,11 @@ stages:
       displayName: 'Print Performance Test Logs'
       inputs:
         targetType: 'inline'
+        workingDirectory: $(System.DefaultWorkingDirectory)/automated-testing
         script: |
-          ls -lah endurance-test-report/
-          ls -lah stress-test-report/
-          cat jmeter.log   
+          ls -lah ./endurance-test-report/
+          ls -lah ./stress-test-report/
+          cat jmeter.log
 
     # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
     - task: PublishTestResults@2
