@@ -86,16 +86,14 @@ stages:
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
     - task: Bash@3
-      displayName: Add VMs to environment
+      displayName: Prepare VMs information
       inputs:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)'
         script: |
-          cat terraform_output.json
           VM_IP=$(grep 'vm_ip' terraform_output.json | awk -F'=' '{print $2}' | tr -d ' "')
           echo $VM_IP
           echo $(az_devops_pat)
-          ssh -o StrictHostKeyChecking=no azureuser@$VM_IP "mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.243.1/vsts-agent-linux-x64-3.243.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x "$(command -v systemctl)" ]; then ./config.sh --environment --environmentname "test" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/udacity-ass3/ --work _work --projectname 'nhan-udacity-ass3' --auth PAT --token $(az_devops_pat) --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname "test" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/udacity-ass3/ --work _work --projectname 'nhan-udacity-ass3' --auth PAT --token $(az_devops_pat); ./run.sh; fi"
     
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
