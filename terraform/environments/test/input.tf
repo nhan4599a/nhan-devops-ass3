@@ -13,7 +13,7 @@ variable "application_type" {}
 variable virtual_network_name {}
 variable address_prefix {}
 variable address_space {}
-variable packer_image_id {}
+variable packer_image {}
 variable admin_password {}
 variable "az_devops_pat" {}
 variable "az_devops_env" {}
