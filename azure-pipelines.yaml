@@ -236,7 +236,7 @@ stages:
       displayName: 'Print Performance Test Logs'
       inputs:
         targetType: 'inline'
-        workingDirectory: $(System.DefaultWorkingDirectory)/automated-testing
+        workingDirectory: $(System.DefaultWorkingDirectory)/automated-testing/jmeter
         script: |
           ls -lah ./endurance-test-report/
           ls -lah ./stress-test-report/
