@@ -14,7 +14,9 @@ def run_function_ui_automation_test(user, password):
     logging.info('Starting the browser...')
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
-
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    
     driver = webdriver.Chrome(options=options)
     
     # for debugging enable driver constructor with no options

@@ -172,7 +172,7 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export validation_test_result.xml'
+        script: 'newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_validation_test.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         
     # Postman Regression Test Suite    
@@ -181,7 +181,7 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export regression_test_result.xml'
+        script: 'newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_regression_test.xml'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
     - task: Bash@3
@@ -228,6 +228,7 @@ stages:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
         script: |
+          export DISPLAY=:99
           echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
           python3 ./functional_ui_test.py
           cat functional_ui_test_selenium.log
@@ -247,7 +248,7 @@ stages:
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/*_result.xml'
-        searchFolder: '$(Build.DefaultWorkingDirectory)'
+        testResultsFiles: '**/RESULT_*.xml'
+        searchFolder: '$(Build.DefaultWorkingDirectory)/automated-testing/postman'
         mergeTestResults: true
         testRunTitle: 'system_test'
