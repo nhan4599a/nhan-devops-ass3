@@ -201,7 +201,7 @@ stages:
       displayName: 'Publish Endurance Test Results'
       inputs:
         htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/endurance-test-report'
+        JmeterReportsPath: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter/endurance-test-report'
 
     - task: Bash@3
       displayName: 'Stress Test Suite'
@@ -219,7 +219,7 @@ stages:
       displayName: 'Publish Stress Test Results'
       inputs:
         htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.DefaultWorkingDirectory)/stress-test-report'
+        JmeterReportsPath: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter/stress-test-report'
 
     - task: Bash@3
       displayName: 'Execute selenium UI Tests'
