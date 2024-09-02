@@ -1,21 +1,15 @@
 name: Azure Pipelines
 
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 trigger:
 - master
 - staging
 
-# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
-# Otherwise, comment out the line below. 
 pool: main_pool
 
 variables:
   python.version: '3.10.14'
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
-  azureServiceConnectionId: '530d8c95-f660-4419-9b23-8666501517fb'
   # Environment name
   environmentName: 'test'
 
@@ -65,7 +59,7 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-        commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)" -var "admin_password=$(admin_password)"'
+        commandOptions: '-var "tenant_id=$(tenant_id)" -var "subscription_id=$(subscription_id)" -var "client_id=$(client_id)" -var "client_secret=$(client_secret)" -var "admin_password=$(admin_password)" -var "az_devops_org=$(az_devops_org)" -var "az_devops_proj=$(az_devops_proj)" -var "az_devops_env=$(az_devops_env)" -var "az_devops_pat=$(az_devops_pat)"'
 
     
     #--------------------------------------------#
