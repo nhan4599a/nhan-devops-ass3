@@ -65,7 +65,7 @@ module "vm" {
   subnet_id_test       = module.network.subnet_id
   instance_ids         = module.publicip.public_ip_address_id
   packer_image         = var.packer_image
-  public_key_path       = var.public_key_path
+  public_key_path      = var.public_key_path
 }
 
 output "vm_ip" {
