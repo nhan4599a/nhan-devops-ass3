@@ -75,12 +75,13 @@ stages:
       displayName:  Terraform output
       inputs:
         provider: 'azurerm'
-        command: 'output'
-        showDebugOutput: true
-        outFile: 'terraform_out.json'
+        command: 'custom'
+        customCommand: 'output'
+        outputTo: 'file'
+        filename: 'terraform_out.json'
         outputDirectory: '$(System.DefaultWorkingDirectory)'
         outputFormat: 'json'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
+        showDebugOutput: true
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
     - task: Bash@3
