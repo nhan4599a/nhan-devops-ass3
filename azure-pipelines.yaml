@@ -85,8 +85,8 @@ stages:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/$(environmentName)'
         script: |
-          echo $TF_OUT_VM_IP
-          ssh azureuser@$TF_OUT_VM_IP "mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.243.1/vsts-agent-linux-x64-3.243.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x '$(command -v systemctl)' ]; then ./config.sh --environment --environmentname $(environmentName) --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/$(az_devops_org)/ --work _work --projectname $(az_devops_proj) --auth PAT --token $(az_devops_pat) --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname $(environmentName) --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/$(az_devops_org)/ --work _work --projectname $(az_devops_proj) --auth PAT --token $(az_devops_pat); ./run.sh; fi"
+          echo $(TF_OUT_VM_IP)
+          ssh azureuser@$(TF_OUT_VM_IP) "mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.243.1/vsts-agent-linux-x64-3.243.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x '$(command -v systemctl)' ]; then ./config.sh --environment --environmentname $(environmentName) --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/$(az_devops_org)/ --work _work --projectname $(az_devops_proj) --auth PAT --token $(az_devops_pat) --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname $(environmentName) --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/$(az_devops_org)/ --work _work --projectname $(az_devops_proj) --auth PAT --token $(az_devops_pat); ./run.sh; fi"
     
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
