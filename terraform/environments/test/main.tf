@@ -66,6 +66,5 @@ module "vm" {
   subnet_id_test       = module.network.subnet_id
   instance_ids         = module.publicip.public_ip_address_id
   packer_image         = var.packer_image
-  admin_password      = var.admin_password
-  az_env_setup_script = "mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/3.243.1/vsts-agent-linux-x64-3.243.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x '$(command -v systemctl)' ]; then ./config.sh --environment --environmentname ${var.az_devops_env} --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/${var.az_devops_org}/ --work _work --projectname ${var.az_devops_proj} --auth PAT --token ${var.az_devops_pat} --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname ${var.az_devops_env} --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/${var.az_devops_org}/ --work _work --projectname '${var.az_devops_proj}' --auth PAT --token ${var.az_devops_pat}; ./run.sh; fi"
+  public_key_path       = var.public_key_path
 }

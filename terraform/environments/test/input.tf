@@ -10,12 +10,8 @@ variable "resource_group_name" {}
 variable "application_type" {}
 
 # Network
-variable virtual_network_name {}
-variable address_prefix {}
-variable address_space {}
-variable packer_image {}
-variable admin_password {}
-variable "az_devops_pat" {}
-variable "az_devops_env" {}
-variable "az_devops_org" {}
-variable "az_devops_proj" {}
+variable "virtual_network_name" {}
+variable "address_prefix" {}
+variable "address_space" {}
+variable "packer_image" {}
+variable "public_key_path" {}
