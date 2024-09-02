@@ -63,7 +63,7 @@ module "vm" {
   resource_type        = "vm"
 
   admin_username       = "azureuser"
-  subnet_id_test       = module.network.subnet_id_test
+  subnet_id_test       = module.network.subnet_id
   instance_ids         = module.publicip.public_ip_address_id
   packer_image         = var.packer_image_id
   admin_password      = var.admin_password
