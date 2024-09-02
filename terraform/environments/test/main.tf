@@ -55,7 +55,6 @@ module "publicip" {
   resource_type    = "publicip"
   resource_group   = "${var.resource_group_name}"
 }
-
 module "vm" {
   source               = "../../modules/vm"
   location             = "${var.location}"
@@ -67,4 +66,8 @@ module "vm" {
   instance_ids         = module.publicip.public_ip_address_id
   packer_image         = var.packer_image
   public_key_path       = var.public_key_path
+}
+
+output "vm_ip" {
+  value = module.publicip.public_ip_address
 }
