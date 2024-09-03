@@ -46,7 +46,7 @@ resource "azurerm_monitor_metric_alert" "test" {
   criteria {
     metric_namespace = "Microsoft.Web/sites"
     metric_name = "Http404"
-    aggregation = "Count"
+    aggregation = "Total"
     operator = "GreaterThan"
     threshold = 2
   }

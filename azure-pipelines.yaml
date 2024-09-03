@@ -145,10 +145,17 @@ stages:
         targetType: 'inline'
         script: |
           newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-validation_test.xml
-          ls -lah .
-          cat RESULT-validation_test.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
-        
+
+    - task: PublishTestResults@2
+      displayName: Publish validation_test Tests Result
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/RESULT-validation_test.xml'
+        searchFolder: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+        mergeTestResults: true
+        testRunTitle: 'validation_test'
+
     # Postman Regression Test Suite    
     - task: Bash@3
       displayName: Run Regression Tests
@@ -157,9 +164,16 @@ stages:
         targetType: 'inline'
         script: |
           newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-regression_test.xml
-          ls -lah .
-          cat RESULT-regression_test.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+
+    - task: PublishTestResults@2
+      displayName: Publish regression_test Tests Result
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/RESULT-regression_test.xml'
+        searchFolder: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
+        mergeTestResults: true
+        testRunTitle: 'regression_test'
 
     - task: Bash@3
       displayName: 'Execute Endurance Test Suite'
@@ -181,7 +195,7 @@ stages:
         JmeterReportsPath: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter/endurance-test-report'
 
     - task: Bash@3
-      displayName: 'Stress Test Suite'
+      displayName: 'Execute Stress Test Suite'
       inputs:
         targetType: 'inline'
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
@@ -212,7 +226,7 @@ stages:
           cat ./functional_ui_test_selenium.log
           sudo mkdir -p /var/log/selenium
           sudo cp -f ./functional_ui_test_selenium.log /var/log/selenium/functional_ui_test_selenium.log
-
+        
     - task: Bash@3
       displayName: 'Print Performance Test Logs'
       inputs:
@@ -222,13 +236,3 @@ stages:
           ls -lah ./endurance-test-report/
           ls -lah ./stress-test-report/
           cat jmeter.log
-
-    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
-    - task: PublishTestResults@2
-      displayName: Publish Tests Result
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/RESULT-*.xml'
-        searchFolder: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
-        mergeTestResults: true
-        testRunTitle: 'system_test'

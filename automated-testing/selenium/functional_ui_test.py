@@ -7,7 +7,7 @@ import logging
 def run_function_ui_automation_test(user, password):
     logging.basicConfig(
         filename='functional_ui_test_selenium.log',
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(asctime)s %(levelname)s %(message)s'
     )
 
