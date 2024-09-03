@@ -143,7 +143,9 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_validation_test.xml'
+        script: |
+          newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_validation_test.xml'
+          ls -lah .
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         
     # Postman Regression Test Suite    
@@ -152,7 +154,9 @@ stages:
       continueOnError: true
       inputs:
         targetType: 'inline'
-        script: 'newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_regression_test.xml'
+        script: |
+          newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_regression_test.xml
+          ls -lah .
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
     - task: Bash@3
@@ -164,9 +168,9 @@ stages:
         script: |
           jmeter -n \
             -t ./endurance_test_suite.jmx \
-            -l ./endurance-test-report/endurance-results.jtl \
+            -l endurance-test-report/endurance-results.jtl \
             -e \
-            -o ./endurance-test-report
+            -o endurance-test-report
     
     - task: publishhtmlreport@1
       displayName: 'Publish Endurance Test Results'
@@ -182,9 +186,9 @@ stages:
         script: |
           jmeter -n \
             -t ./stress_test_suite.jmx \
-            -l ./stress-test-report/stress-results.jtl \
+            -l stress-test-report/stress-results.jtl \
             -e \
-            -o ./stress-test-report
+            -o stress-test-report
 
     - task: publishhtmlreport@1
       displayName: 'Publish Stress Test Results'
