@@ -146,6 +146,7 @@ stages:
         script: |
           newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-validation_test.xml
           ls -lah .
+          cat RESULT-validation_test.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         
     # Postman Regression Test Suite    
@@ -157,6 +158,7 @@ stages:
         script: |
           newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-regression_test.xml
           ls -lah .
+          cat RESULT-regression_test.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
     - task: Bash@3
@@ -226,7 +228,7 @@ stages:
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: './RESULT-*.xml'
+        testResultsFiles: '**/RESULT-*.xml'
         searchFolder: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         mergeTestResults: true
         testRunTitle: 'system_test'
