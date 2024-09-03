@@ -93,21 +93,6 @@ stages:
         script: |
           VM_IP=$(grep 'vm_ip' terraform_output.json | awk -F'=' '{print $2}' | tr -d ' "')
           echo $VM_IP
-    
-    #--------------------------------------------#
-    # Selenium (UI) Test Suite - Archive the package  
-    # "ArchiveFiles@2" picks up the web package and archives it.
-    - task: ArchiveFiles@2
-      displayName: 'Archive UI Tests'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automated-testing/selenium'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-ui_tests.zip'
-    # Selenium Test Suite - Publish the package  
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-ui_tests.zip   # Same as the archiveFile artifact above. 
-      displayName: 'Upload Package'
-      artifact: ui-tests-artifact
 
     #--------------------------------------------#    
     # FakeRestAPI - Archive
@@ -121,20 +106,6 @@ stages:
     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-restapi.zip
       displayName: 'Upload FakeRestAPI Package'
       artifact: rest-api-artifact
-
-    #--------------------------------------------#  
-    # JMeter (Performance) Test Suite - Archive
-    - task: ArchiveFiles@2
-      displayName: 'Archive Performance testsuite'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automated-testing/jmeter'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perf_tests.zip'
-    # JMeter Test Suite - Publish    
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perf_tests.zip
-      displayName: 'Upload Performance testsuite Package'
-      artifact: performance-tests-artifact
 
 #--------------------------------------------#
 # DEPLOYMENT STAGE
@@ -230,9 +201,10 @@ stages:
         script: |
           export DISPLAY=:99
           echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
+          rm ./functional_ui_test_selenium.log
           python3 ./functional_ui_test.py
           cat ./functional_ui_test_selenium.log
-          sudo cp ./functional_ui_test_selenium.log /var/log/selenium/functional_ui_test_selenium.log
+          sudo cp -f ./functional_ui_test_selenium.log /var/log/selenium/functional_ui_test_selenium.log
 
     - task: Bash@3
       displayName: 'Print Performance Test Logs'

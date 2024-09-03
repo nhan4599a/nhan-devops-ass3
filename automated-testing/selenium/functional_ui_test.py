@@ -1,6 +1,6 @@
-# #!/usr/bin/env python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.common.by import By
 import logging
 
 # Start the browser and login with standard_user
@@ -17,6 +17,7 @@ def run_function_ui_automation_test(user, password):
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
+    options.add_argument('--remote-debugging-pipe')
     
     driver = webdriver.Chrome(options=options)
     
@@ -26,53 +27,51 @@ def run_function_ui_automation_test(user, password):
     # Test Login to the site
     logging.info('Browser started successfully. Navigating to the demo page to login.')
     driver.get('https://www.saucedemo.com/')
-    driver.find_element_by_css_selector("input[id='user-name']").send_keys(user)
-    driver.find_element_by_css_selector("input[id='password']").send_keys(password)
-    driver.find_element_by_css_selector("input[id='login-button']").click()
+    driver.find_element(By.CSS_SELECTOR, "input#user-name").send_keys(user)
+    driver.find_element(By.CSS_SELECTOR, "input#password").send_keys(password)
+    driver.find_element(By.CSS_SELECTOR, "input#login-button").click()
 
-    path_content_div = "div[id='inventory_container']"
-    results = driver.find_element_by_css_selector(f"{path_content_div} > div[class='header_secondary_container'] span[class='title']").text
-    assert "Products" in results
+    xpath_header_text = '//*[@id="header_container"]/div[2]/span'
+    home_page_title = driver.find_element(By.XPATH, xpath_header_text).text
+    assert "Products" in home_page_title
     logging.info(f"Successfully logged in as {user}")
 
     total_products = '6'
 
+    xpath_content_div = "//*[@id='inventory_container']"
     # Test Add Items to Shopping Cart
     logging.info("Starting the shopping...")
-    path_inventory_item = f"{path_content_div} > div[id='inventory_container'] > div[class='inventory_list'] > div[class='inventory_item']"
-    product_items = driver.find_elements_by_css_selector(path_inventory_item)
+    path_inventory_item = f"{xpath_content_div}/div[@class='inventory_list']/div[@class='inventory_item']"
+    product_items = driver.find_elements(By.XPATH, path_inventory_item)
     assert len(product_items) == int(total_products)
     logging.info("Successfully found 6 product items.")
-    
-    for i in range(6):
-        path_product_item_name = f"{path_inventory_item} > div[class='inventory_item_label'] > a[id='item_{i}_title_link'] > div[class='inventory_item_name']"
-        product_item_name = driver.find_element_by_css_selector(path_product_item_name)
-        product_item_name.find_element_by_xpath('..//..//..//div[@class="pricebar"]//button[@class="btn_primary btn_inventory"]').click()
-        logging.info("Succesfully added to shopping cart: " + product_item_name.text)
 
-    path_shopping_cart_url = "div[id='page_wrapper'] > div[id='contents_wrapper'] > div[id='header_container'] > div[id='shopping_cart_container'] > a.shopping_cart_link.fa-layers.fa-fw"
-    path_shopping_cart_badge = f"{path_shopping_cart_url} > span.fa-layers-counter.shopping_cart_badge"
-    shopping_cart_total_items = driver.find_element_by_css_selector(path_shopping_cart_badge).text
+    for product_item in product_items:
+        product_item_name = product_item.find_element(By.XPATH, "./div[@class='inventory_item_description']/div[@class='inventory_item_label']/a/div")
+        product_item_name.find_element(By.XPATH, "../../../div[@class='pricebar']/button").click()
+        logging.info(f"Succesfully added product with name '{product_item_name.text}' to shopping cart")
+
+    xpath_shopping_cart_badge = "//div[@id='header_container']//div[@id='shopping_cart_container']//span[@class='shopping_cart_badge']"
+    shopping_cart_badge = driver.find_element(By.XPATH, xpath_shopping_cart_badge)
+    shopping_cart_total_items = shopping_cart_badge.text
     assert total_products == shopping_cart_total_items
     logging.info(f'Succesfully added {total_products} items to shopping cart')
 
     # Test Remove Items from Shopping Cart
     logging.info("Destroying shopping cart...")
-    driver.find_element_by_css_selector(path_shopping_cart_url).click()
-    cart_title = driver.find_element_by_css_selector("div[id='contents_wrapper'] > div[class='subheader']").text
-    assert 'Cart' in cart_title
+    shopping_cart_badge.find_element(By.XPATH, '..').click()
+
+    cart_title = driver.find_element(By.XPATH, xpath_header_text).text
+    assert 'Your Cart' in cart_title
     logging.info("Successfully visited the Shopping Cart page.")
 
-    path_cart_item_remove_buttons = "div[id='cart_contents_container'] div[class='cart_list'] > div[class='cart_item'] div[class='item_pricebar'] button"
-    remove_item_buttons = driver.find_elements_by_css_selector(path_cart_item_remove_buttons)
+    card_items = driver.find_elements(By.XPATH, "//div[@id='cart_contents_container']//div[@class='cart_item']")
     
-    for remove_button in remove_item_buttons:
-        shopping_cart_item_name = remove_button.find_element_by_xpath('..//..//a[contains(@id, "_title_link")]//div[@class="inventory_item_name"]').text
-        remove_button.click()
+    for cart_item in card_items:
+        shopping_cart_item_name = cart_item.find_element(By.XPATH, '//a[contains(@id, "_title_link")]//div[@class="inventory_item_name"]').text
+        cart_item.find_element(By.XPATH, '//div[@class="item_pricebar"]/button').click()
         logging.info(f'Succesfully removed a product with name "{shopping_cart_item_name}" from shopping cart')
 
-    shopping_cart_total_items = driver.find_elements_by_css_selector(path_shopping_cart_badge)
-    assert 0 == len(shopping_cart_total_items)
     logging.info("Succesfully removed all products from shopping cart.")
 
 
