@@ -144,7 +144,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_validation_test.xml'
+          newman run validation_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-validation_test.xml
           ls -lah .
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         
@@ -155,7 +155,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT_regression_test.xml
+          newman run regression_test.json -e test.environment.json --reporters cli,junit --reporter-junit-export RESULT-regression_test.xml
           ls -lah .
         workingDirectory: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
 
@@ -226,7 +226,7 @@ stages:
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/RESULT_*.xml'
-        searchFolder: '$(Build.DefaultWorkingDirectory)/automated-testing/postman'
+        testResultsFiles: './RESULT-*.xml'
+        searchFolder: '$(System.DefaultWorkingDirectory)/automated-testing/postman'
         mergeTestResults: true
         testRunTitle: 'system_test'
