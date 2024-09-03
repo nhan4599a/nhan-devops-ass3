@@ -231,7 +231,8 @@ stages:
           export DISPLAY=:99
           echo 'this is pre-built vm that comed with python3.10, selenium and chromium browser and chromium driver to run UI Tests'
           python3 ./functional_ui_test.py
-          cat functional_ui_test_selenium.log
+          cat ./functional_ui_test_selenium.log
+          sudo cp ./functional_ui_test_selenium.log /var/log/selenium/functional_ui_test_selenium.log
 
     - task: Bash@3
       displayName: 'Print Performance Test Logs'
@@ -248,7 +249,7 @@ stages:
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: '**/RESULT_*.xml'
+        testResultsFiles: './RESULT_*.xml'
         searchFolder: '$(Build.DefaultWorkingDirectory)/automated-testing/postman'
         mergeTestResults: true
         testRunTitle: 'system_test'
