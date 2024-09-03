@@ -204,6 +204,7 @@ stages:
           rm ./functional_ui_test_selenium.log
           python3 ./functional_ui_test.py
           cat ./functional_ui_test_selenium.log
+          sudo mkdir -p /var/log/selenium
           sudo cp -f ./functional_ui_test_selenium.log /var/log/selenium/functional_ui_test_selenium.log
 
     - task: Bash@3
@@ -221,7 +222,7 @@ stages:
       displayName: Publish Tests Result
       inputs:
         testResultsFormat: 'JUnit'
-        testResultsFiles: './RESULT_*.xml'
+        testResultsFiles: '**/RESULT_*.xml'
         searchFolder: '$(Build.DefaultWorkingDirectory)/automated-testing/postman'
         mergeTestResults: true
         testRunTitle: 'system_test'
