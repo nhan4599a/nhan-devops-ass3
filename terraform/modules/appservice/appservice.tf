@@ -29,7 +29,7 @@ resource "azurerm_windows_web_app" "test" {
 resource "azurerm_monitor_action_group" "test" {
   name = "${var.application_type}-action_group"
   resource_group_name = var.resource_group
-  short_name = "${var.application_type}-action_group"
+  short_name = "act_group_1"
 
   email_receiver {
     name = "Nhan4599"
